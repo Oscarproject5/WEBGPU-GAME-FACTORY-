@@ -1,0 +1,81 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(npm install *)",
+      "Bash(npm init *)",
+      "Bash(npm run *)",
+      "Bash(node *)",
+      "Read",
+      "Glob",
+      "Grep",
+      "Skill(game *)",
+      "Skill(game-build *)",
+      "Skill(game-preview *)",
+      "Skill(game-iterate *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"additionalContext\": \"WebGPU Game Factory is active. Available skills: /game (start new game), /game-build (deploy build team), /game-preview (test in browser), /game-iterate (polish and improve). Available agents: game-architect, webgpu-renderer, gameplay-engineer, ui-designer, audio-engineer, asset-creator, game-integrator, qa-tester.\"}'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are a WebGPU code validator. Check if the file change in $ARGUMENTS involves a .wgsl shader file or WebGPU API code. If it's a .wgsl file, verify: (1) all @group and @binding annotations are present, (2) entry points have @vertex, @fragment, or @compute attributes, (3) workgroup_size is specified for compute shaders, (4) struct fields have proper @location or @builtin attributes. If it's TypeScript WebGPU code, verify: (1) GPU resources are stored for cleanup, (2) no resources created inside loops, (3) device.lost is handled. Respond {\"ok\": true} if valid or no WebGPU code, {\"ok\": false, \"reason\": \"specific issue\"} if problems found.",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are a game development quality gate. A task is being marked as completed. Review the task details: $ARGUMENTS. Check if the task subject and description suggest code was written. If so, verify that the task description doesn't mention any unresolved TODOs, placeholder implementations, or missing error handling. The game must maintain high quality - no half-finished systems. Respond {\"ok\": true} if the task appears genuinely complete, or {\"ok\": false, \"reason\": \"what still needs to be done\"} if it seems incomplete.",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are a WebGPU game build verifier. Claude is about to stop working. Review the conversation context: $ARGUMENTS. Check if Claude was working on game code and stopping prematurely. If there are: (1) TypeScript compilation errors mentioned but not fixed, (2) missing imports or broken references discussed but unresolved, (3) a game system that was started but not connected to the game loop, then Claude should continue. Respond {\"ok\": true} if stopping is appropriate, or {\"ok\": false, \"reason\": \"what still needs to be finished\"} if work is incomplete.",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "webgpu-renderer|gameplay-engineer|ui-designer|audio-engineer|asset-creator",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "A specialist game development agent just finished its work. Review the context: $ARGUMENTS. Check if the agent's output follows WebGPU best practices: (1) Are GPU resources properly managed? (2) Are shaders syntactically correct? (3) Does the code export the expected init/update/render/destroy interface? Respond {\"ok\": true} if the work looks complete and correct, or {\"ok\": false, \"reason\": \"what needs fixing\"} if there are issues.",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

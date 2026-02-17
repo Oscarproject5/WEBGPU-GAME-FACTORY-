@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Vite cache
+.vite/
+
+# Local settings (user-specific)
+.claude/settings.local.json
+
+# Screenshots (generated during preview)
+*.png
+*.jpg
+*.jpeg
+
+# Playwright MCP cache
+.playwright-mcp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Per-game build artifacts (games are built locally)
+games/*/node_modules/
+games/*/dist/
+games/*/.vite/
+games/*/package-lock.json

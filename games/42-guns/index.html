@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>42 Guns</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-deep: oklch(0.08 0.03 270);
+      --bg-mid: oklch(0.15 0.08 280);
+      --player-primary: oklch(0.78 0.18 200);
+      --player-accent: oklch(0.65 0.25 340);
+      --enemy-swarm: oklch(0.72 0.22 145);
+      --enemy-armada: oklch(0.55 0.22 25);
+      --enemy-void: oklch(0.45 0.25 300);
+      --enemy-nexus: oklch(0.75 0.18 85);
+      --powerup: oklch(0.92 0.12 195);
+      --ui-neon: oklch(0.70 0.20 350);
+      --explosion: oklch(0.85 0.15 65);
+      --font-primary: 'Orbitron', sans-serif;
+      --font-secondary: 'Space Grotesk', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-deep);
+      font-family: var(--font-secondary);
+      color: white;
+    }
+
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas#game-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #ui-overlay > * {
+      pointer-events: auto;
+    }
+
+    #loading-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-deep);
+      z-index: 100;
+      font-family: var(--font-primary);
+      color: var(--player-primary);
+      transition: opacity 0.5s ease-out;
+    }
+
+    #loading-screen h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      text-shadow: 0 0 20px var(--player-primary), 0 0 40px var(--player-accent);
+      margin-bottom: 2rem;
+      letter-spacing: 0.1em;
+    }
+
+    #loading-screen .loader {
+      width: 200px;
+      height: 4px;
+      background: oklch(0.2 0.05 200);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    #loading-screen .loader-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--player-primary), var(--player-accent));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px var(--player-primary);
+    }
+
+    #loading-screen .status {
+      margin-top: 1rem;
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      color: oklch(0.6 0.08 200);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game-canvas"></canvas>
+    <div id="ui-overlay"></div>
+    <div id="loading-screen">
+      <h1>42 GUNS</h1>
+      <div class="loader">
+        <div class="loader-bar" id="loader-bar"></div>
+      </div>
+      <p class="status" id="loading-status">Initializing WebGPU...</p>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
